@@ -23,7 +23,7 @@ Return ONLY a valid JSON object (no markdown, no explanation, no backticks) with
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 1000,
         system: SYSTEM,
         messages: [
@@ -36,10 +36,18 @@ Return ONLY a valid JSON object (no markdown, no explanation, no backticks) with
     });
 
     const data = await response.json();
-    const text = data.content[0].text;
-    const strategy = JSON.parse(text);
+
+    if (!response.ok || !data.content) {
+      console.error("Anthropic error:", JSON.stringify(data));
+      return res.status(500).json({
+        error: data?.error?.message || `Anthropic API error: ${JSON.stringify(data)}`,
+      });
+    }
+
+    const strategy = JSON.parse(data.content[0].text);
     res.status(200).json(strategy);
- } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message || "Failed to generate strategy." });
+  } catch (err) {
+    console.error("Handler error:", err.message);
+    res.status(500).json({ error: err.message });
   }
+}
