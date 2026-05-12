@@ -39,8 +39,7 @@ Return ONLY a valid JSON object (no markdown, no explanation, no backticks) with
     const text = data.content[0].text;
     const strategy = JSON.parse(text);
     res.status(200).json(strategy);
-  } catch (err) {
+ } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to generate strategy." });
+    res.status(500).json({ error: err.message || "Failed to generate strategy." });
   }
-}
