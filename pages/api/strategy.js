@@ -44,7 +44,8 @@ Return ONLY a valid JSON object (no markdown, no explanation, no backticks) with
       });
     }
 
-    const strategy = JSON.parse(data.content[0].text);
+    const raw = data.content[0].text.replace(/^```json\s*/,'').replace(/```\s*$/,'').trim();
+const strategy = JSON.parse(raw);
     res.status(200).json(strategy);
   } catch (err) {
     console.error("Handler error:", err.message);
