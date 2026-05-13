@@ -156,7 +156,14 @@ export default function Home() {
           .reveal-4{animation:fadeUp 0.5s 0.35s ease both;}
           .reveal-5{animation:fadeUp 0.5s 0.45s ease both;}
           .reveal-6{animation:fadeUp 0.5s 0.55s ease both;}
-
+.insight-text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.signal-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.signal-value-grp{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+@media(max-width:640px){
+  .insight-text{display:block!important;overflow:visible!important;-webkit-line-clamp:unset!important;}
+  .signal-row{flex-direction:column;align-items:flex-start;gap:3px;}
+  .signal-value-grp{margin-top:2px;}
+}
           .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 1.75rem; }
           .main-grid { display: grid; grid-template-columns: 245px 1fr; gap: 12px; align-items: start; }
           .gauge-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
@@ -324,7 +331,7 @@ export default function Home() {
                         {(strategy.ai_insights || []).map((ins, i) => (
                           <div key={i} style={{ background: C.deep, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: 8, padding: "10px 12px", display: "flex", gap: 10, alignItems: "flex-start" }}>
                             <span style={{ color: C.gold, fontSize: 12, marginTop: 1, flexShrink: 0 }}>✦</span>
-                            <p style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{ins.insight}</p>
+                            <p className="insight-text" style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0 }}>{ins.insight}</p>
                           </div>
                         ))}
                       </div>
@@ -338,8 +345,9 @@ export default function Home() {
                           const ic = s.impact === "positive" ? "#4ade80" : s.impact === "negative" ? "#f87171" : C.label;
                           const ib = s.impact === "positive" ? "rgba(74,222,128,0.08)" : s.impact === "negative" ? "rgba(248,113,113,0.08)" : "rgba(144,144,176,0.06)";
                           return (
-                            <div key={i} style={{ display: "flex", alignItems: "flex-start", flexWrap: "wrap", padding: "7px 10px", background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7, gap: 6 }}>
-                              <span style={{ fontSize: 12, color: C.body, flex: 1 }}>{s.label}</span>
+                            <div key={i} className="signal-row" style={{ padding: "7px 10px", background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7 }}>
+  <span style={{ fontSize: 12, color: C.body }}>{s.label}</span>
+  <div className="signal-value-grp">
                               <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
                                 <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 12, color: C.heading, fontWeight: 500 }}>{s.value}</span>
                                 <span style={{ fontSize: 9, padding: "2px 7px", background: ib, color: ic, borderRadius: 20, textTransform: "uppercase", letterSpacing: "0.4px", fontWeight: 600 }}>{s.impact}</span>
