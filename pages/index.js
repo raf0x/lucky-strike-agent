@@ -43,7 +43,7 @@ export default function Home() {
       if (data.error) throw new Error(data.error);
       setStrategy(data);
     } catch (err) {
-      setError("Could not generate strategy. Check your API key in Vercel environment variables.");
+      setError(err.message || "Could not generate strategy.");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,6 @@ export default function Home() {
 
       <main style={{ fontFamily: "'DM Sans', sans-serif", maxWidth: 960, margin: "0 auto", padding: "2rem 1.5rem", background: "#fff", minHeight: "100vh" }}>
 
-        {/* Header */}
         <div style={{ marginBottom: "2rem", borderBottom: "1px solid #f0f0f0", paddingBottom: "1.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
@@ -84,7 +83,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Metrics */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: "1.75rem" }}>
           {metrics.map((m) => (
             <div key={m.label} style={{ background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 10, padding: "12px 14px" }}>
@@ -94,10 +92,8 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Two-column layout */}
         <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 16, alignItems: "start" }}>
 
-          {/* Account list */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 500, color: "#999", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               Accounts
@@ -109,14 +105,7 @@ export default function Home() {
                 <div
                   key={acc.id}
                   onClick={() => handleSelect(acc)}
-                  style={{
-                    background: sel ? "#f9f9f9" : "#fff",
-                    border: sel ? "1.5px solid #111" : "1px solid #eee",
-                    borderRadius: 10,
-                    padding: "10px 12px",
-                    cursor: "pointer",
-                    transition: "border-color 0.15s",
-                  }}
+                  style={{ background: sel ? "#f9f9f9" : "#fff", border: sel ? "1.5px solid #111" : "1px solid #eee", borderRadius: 10, padding: "10px 12px", cursor: "pointer" }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
                     <span style={{ fontWeight: 500, fontSize: 13 }}>{acc.company}</span>
@@ -134,7 +123,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Detail panel */}
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {!selected && (
               <div style={{ background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 12, padding: "3rem 1.5rem", textAlign: "center" }}>
@@ -146,7 +134,6 @@ export default function Home() {
 
             {selected && (
               <>
-                {/* Account card */}
                 <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 12, padding: "14px 16px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                     <div>
@@ -168,11 +155,10 @@ export default function Home() {
                   <p style={{ margin: 0, fontSize: 11, color: "#aaa", fontStyle: "italic" }}>{selected.notes}</p>
                 </div>
 
-                {/* Generate button */}
                 {!strategy && !loading && (
                   <button
                     onClick={() => generateStrategy(selected)}
-                    style={{ padding: "11px 16px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, cursor: "pointer", border: "1px solid #111", borderRadius: 8, background: "#111", color: "#fff", transition: "opacity 0.15s" }}
+                    style={{ padding: "11px 16px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, cursor: "pointer", border: "1px solid #111", borderRadius: 8, background: "#111", color: "#fff" }}
                     onMouseEnter={(e) => (e.target.style.opacity = 0.85)}
                     onMouseLeave={(e) => (e.target.style.opacity = 1)}
                   >
@@ -204,6 +190,36 @@ export default function Home() {
                       <div style={{ background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 10, padding: "12px 14px" }}>
                         <p style={{ margin: "0 0 4px", fontSize: 11, color: "#999" }}>Recommended offer</p>
                         <p style={{ margin: 0, fontSize: 12, fontWeight: 500, lineHeight: 1.5 }}>{strategy.recommended_offer}</p>
+                      </div>
+                    </div>
+
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 12, padding: "14px 16px" }}>
+                      <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", color: "#999" }}>AI Signals</p>
+                      <p style={{ margin: "0 0 12px", fontSize: 11, color: "#bbb" }}>Data points Claude analyzed to generate this strategy</p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+                        {(strategy.signals || []).map((s, i) => {
+                          const impactColor = s.impact === "positive" ? "#2e7d32" : s.impact === "negative" ? "#c62828" : "#888";
+                          const impactBg = s.impact === "positive" ? "#e8f5e9" : s.impact === "negative" ? "#ffebee" : "#f5f5f5";
+                          return (
+                            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 10px", background: "#fafafa", borderRadius: 8 }}>
+                              <span style={{ fontSize: 12, color: "#555" }}>{s.label}</span>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 12, fontWeight: 500, color: "#111" }}>{s.value}</span>
+                                <span style={{ fontSize: 10, padding: "2px 8px", background: impactBg, color: impactColor, borderRadius: 20, fontWeight: 500, textTransform: "capitalize" }}>{s.impact}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                        <div style={{ padding: "9px 11px", background: "#ffebee", borderRadius: 8 }}>
+                          <p style={{ margin: "0 0 3px", fontSize: 10, color: "#c62828", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>Risk</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", lineHeight: 1.5 }}>{strategy.risk_summary}</p>
+                        </div>
+                        <div style={{ padding: "9px 11px", background: "#e8f5e9", borderRadius: 8 }}>
+                          <p style={{ margin: "0 0 3px", fontSize: 10, color: "#2e7d32", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>Opportunity</p>
+                          <p style={{ margin: 0, fontSize: 11, color: "#555", lineHeight: 1.5 }}>{strategy.opportunity_summary}</p>
+                        </div>
                       </div>
                     </div>
 
@@ -240,7 +256,7 @@ export default function Home() {
 
         <div style={{ marginTop: "3rem", paddingTop: "1.5rem", borderTop: "1px solid #f0f0f0", textAlign: "center" }}>
           <p style={{ margin: 0, fontSize: 11, color: "#ccc" }}>
-            Built by Rafael · Lucky Strike Entertainment · Powered by Anthropic Claude
+            Built by Rafael Lemor · Lucky Strike Entertainment · Powered by Anthropic Claude
           </p>
         </div>
       </main>
