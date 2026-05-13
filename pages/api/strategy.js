@@ -21,10 +21,10 @@ Return ONLY a valid JSON object (no markdown, no backticks, no explanation) with
   "risk_summary": "string (1 sentence)",
   "opportunity_summary": "string (1 sentence)",
   "timeline": [
-    { "week": 1, "action": "string (short, 6 words max)", "channel": "string (Email or SMS or Phone or Event)", "goal": "string (one sentence)" },
-    { "week": 2, "action": "string", "channel": "string", "goal": "string" },
-    { "week": 3, "action": "string", "channel": "string", "goal": "string" },
-    { "week": 4, "action": "string", "channel": "string", "goal": "string" }
+    { "week": 1, "action": "string (short, 6 words max)", "channel": "string (Email or SMS or Phone or Event)", "goal": "string (one sentence)", "confidence": integer 0-100 },
+    { "week": 2, "action": "string", "channel": "string", "goal": "string", "confidence": integer 0-100 },
+    { "week": 3, "action": "string", "channel": "string", "goal": "string", "confidence": integer 0-100 },
+    { "week": 4, "action": "string", "channel": "string", "goal": "string", "confidence": integer 0-100 }
   ],
   "ai_insights": [
     { "insight": "string (a specific data-driven observation about this account type, 1-2 sentences)" },
@@ -34,7 +34,8 @@ Return ONLY a valid JSON object (no markdown, no backticks, no explanation) with
 
 For revenue_recovery_90d: calculate as approximately (annual_value / 365) * 90 * (rebooking_probability / 100), rounded to nearest thousand.
 For signals: return 4-5 key data points from the account profile that most influenced the strategy.
-For ai_insights: make them specific, quantified, and actionable. Reference real Lucky Strike dynamics like F&B spend, arcade engagement, or event frequency patterns.`;
+For ai_insights: make them specific, quantified, and actionable. Reference real Lucky Strike dynamics like F&B spend, arcade engagement, or event frequency patterns.
+For timeline confidence: assign a realistic confidence score (0-100) to each week based on how likely that action is to succeed given the account profile.`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
