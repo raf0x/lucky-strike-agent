@@ -108,17 +108,11 @@ export default function Home() {
   const [showDetail, setShowDetail] = useState(false);
 
   const handleSelect = (acc) => {
-    setSelected(acc);
-    setStrategy(null);
-    setError(null);
-    setRevealed(false);
-    setShowDetail(true);
+    setSelected(acc); setStrategy(null); setError(null); setRevealed(false); setShowDetail(true);
   };
 
   const handleBack = () => {
-    setShowDetail(false);
-    setSelected(null);
-    setStrategy(null);
+    setShowDetail(false); setSelected(null); setStrategy(null);
   };
 
   const generate = async (acc) => {
@@ -156,29 +150,23 @@ export default function Home() {
           .reveal-4{animation:fadeUp 0.5s 0.35s ease both;}
           .reveal-5{animation:fadeUp 0.5s 0.45s ease both;}
           .reveal-6{animation:fadeUp 0.5s 0.55s ease both;}
-.insight-text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.signal-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.signal-value-grp{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-@media(max-width:640px){
-  .insight-text{display:block!important;overflow:visible!important;-webkit-line-clamp:unset!important;}
-  .signal-row{flex-direction:column;align-items:flex-start;gap:3px;}
-  .signal-value-grp{margin-top:2px;}
-}
-          .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 1.75rem; }
-          .main-grid { display: grid; grid-template-columns: 245px 1fr; gap: 12px; align-items: start; }
-          .gauge-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
-          .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
-          .mobile-back { display: none; }
-          .desktop-list { display: block; }
-
-          @media (max-width: 640px) {
-            .metrics-grid { grid-template-columns: repeat(2,1fr); }
-            .main-grid { grid-template-columns: 1fr; }
-            .gauge-row { grid-template-columns: 1fr; }
-            .kpi-grid { grid-template-columns: 1fr 1fr; }
-            .mobile-back { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer; }
-            .desktop-list.hidden-mobile { display: none; }
-            .detail-panel.hidden-mobile { display: none; }
+          .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.75rem;}
+          .main-grid{display:grid;grid-template-columns:245px 1fr;gap:12px;align-items:start;}
+          .gauge-row{display:grid;grid-template-columns:150px 1fr;gap:10px;}
+          .kpi-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;}
+          .mobile-back{display:none;}
+          .signal-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;gap:8px;}
+          .signal-value-grp{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+          @media(max-width:640px){
+            .metrics-grid{grid-template-columns:repeat(2,1fr);}
+            .main-grid{grid-template-columns:1fr;}
+            .gauge-row{grid-template-columns:1fr;}
+            .kpi-grid{grid-template-columns:1fr 1fr;}
+            .mobile-back{display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;}
+            .desktop-list.hidden-mobile{display:none;}
+            .detail-panel.hidden-mobile{display:none;}
+            .signal-row{flex-direction:column;align-items:flex-start;gap:4px;}
+            .signal-value-grp{margin-top:2px;}
           }
         `}</style>
       </Head>
@@ -188,10 +176,10 @@ export default function Home() {
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: `1px solid ${C.border}` }}>
           <div>
-            <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: "clamp(16px, 4vw, 21px)", fontWeight: 800, color: C.heading, letterSpacing: "-0.3px", margin: 0 }}>
+            <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: "clamp(16px,4vw,21px)", fontWeight: 800, color: C.heading, letterSpacing: "-0.3px", margin: 0 }}>
               Account Pulse
             </h1>
-            <p style={{ fontSize: "clamp(10px, 2.5vw, 12px)", color: C.label, marginTop: 3 }}>Lucky Strike Entertainment · Revenue Intelligence Platform</p>
+            <p style={{ fontSize: "clamp(10px,2.5vw,12px)", color: C.label, marginTop: 3 }}>Lucky Strike Entertainment · Revenue Intelligence Platform</p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", display: "inline-block", boxShadow: "0 0 8px #4ade80", animation: "glow 2s ease infinite" }} />
@@ -246,7 +234,6 @@ export default function Home() {
           {/* Detail panel */}
           <div className={`detail-panel${!showDetail ? " hidden-mobile" : ""}`} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
-            {/* Mobile back button */}
             <div className="mobile-back" onClick={handleBack}>
               <span style={{ color: C.gold, fontSize: 14 }}>←</span>
               <span style={{ fontSize: 12, color: C.body }}>All accounts</span>
@@ -261,7 +248,6 @@ export default function Home() {
 
             {selected && (
               <>
-                {/* Account card */}
                 <div style={card()}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                     <div style={{ flex: 1, marginRight: 12 }}>
@@ -308,7 +294,7 @@ export default function Home() {
 
                 {strategy && (
                   <>
-                    {/* Row 1: Gauge + KPIs */}
+                    {/* Gauge + KPIs */}
                     <div className="reveal-1 gauge-row">
                       <div style={{ ...card(), display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 12px" }}>
                         <Gauge value={strategy.rebooking_probability} />
@@ -324,20 +310,20 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Row 2: AI Insights */}
+                    {/* AI Insights */}
                     <div className="reveal-2" style={card()}>
                       <SectionLabel>AI Insights</SectionLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                         {(strategy.ai_insights || []).map((ins, i) => (
                           <div key={i} style={{ background: C.deep, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: 8, padding: "10px 12px", display: "flex", gap: 10, alignItems: "flex-start" }}>
                             <span style={{ color: C.gold, fontSize: 12, marginTop: 1, flexShrink: 0 }}>✦</span>
-                            <p className="insight-text" style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0 }}>{ins.insight}</p>
+                            <p style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0 }}>{ins.insight}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    {/* Row 3: AI Signals */}
+                    {/* AI Signals */}
                     <div className="reveal-3" style={card()}>
                       <SectionLabel>AI Signals</SectionLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
@@ -345,10 +331,9 @@ export default function Home() {
                           const ic = s.impact === "positive" ? "#4ade80" : s.impact === "negative" ? "#f87171" : C.label;
                           const ib = s.impact === "positive" ? "rgba(74,222,128,0.08)" : s.impact === "negative" ? "rgba(248,113,113,0.08)" : "rgba(144,144,176,0.06)";
                           return (
-                            <div key={i} className="signal-row" style={{ padding: "7px 10px", background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7 }}>
-  <span style={{ fontSize: 12, color: C.body }}>{s.label}</span>
-  <div className="signal-value-grp">
-                              <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                            <div key={i} className="signal-row" style={{ background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7 }}>
+                              <span style={{ fontSize: 12, color: C.body }}>{s.label}</span>
+                              <div className="signal-value-grp">
                                 <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 12, color: C.heading, fontWeight: 500 }}>{s.value}</span>
                                 <span style={{ fontSize: 9, padding: "2px 7px", background: ib, color: ic, borderRadius: 20, textTransform: "uppercase", letterSpacing: "0.4px", fontWeight: 600 }}>{s.impact}</span>
                               </div>
@@ -368,7 +353,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Row 4: Timeline */}
+                    {/* Timeline */}
                     <div className="reveal-4" style={card()}>
                       <SectionLabel>30-Day Campaign Timeline</SectionLabel>
                       <div style={{ position: "relative" }}>
@@ -395,7 +380,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Row 5: Email */}
+                    {/* Email */}
                     <div className="reveal-5" style={card()}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                         <SectionLabel style={{ marginBottom: 0 }}>Draft outreach email</SectionLabel>
