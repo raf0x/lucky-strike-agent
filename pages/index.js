@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
 const accounts = [
@@ -48,6 +48,28 @@ function useCounter(target, duration = 1200, active = false) {
     return () => clearInterval(timer);
   }, [target, active]);
   return value;
+}
+
+function useElapsed(active) {
+  const [elapsed, setElapsed] = useState(0);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!active) { setElapsed(0); return; }
+    setElapsed(0);
+    ref.current = setInterval(() => setElapsed(e => e + 1), 1000);
+    return () => clearInterval(ref.current);
+  }, [active]);
+  return elapsed;
+}
+
+function calcInaction(account) {
+  const dailyValue = account.annual_value / 365;
+  const projectedLoss = Math.round(dailyValue * 90 * 0.85 / 1000) * 1000;
+  const bookingsAtRisk = Math.round(account.events_per_year / 4);
+  const guestsAtRisk = Math.round(account.team_size * 0.6);
+  const risk = account.days_since >= 90 ? "Critical" : account.days_since >= 60 ? "High" : "Moderate";
+  const riskColor = account.days_since >= 90 ? "#f87171" : account.days_since >= 60 ? "#fb923c" : "#e8b84b";
+  return { projectedLoss, bookingsAtRisk, guestsAtRisk, risk, riskColor };
 }
 
 function Gauge({ value }) {
@@ -106,17 +128,20 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [revealed, setRevealed] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [showInaction, setShowInaction] = useState(false);
+  const elapsed = useElapsed(revealed);
 
   const handleSelect = (acc) => {
-    setSelected(acc); setStrategy(null); setError(null); setRevealed(false); setShowDetail(true);
+    setSelected(acc); setStrategy(null); setError(null);
+    setRevealed(false); setShowDetail(true); setShowInaction(false);
   };
 
   const handleBack = () => {
-    setShowDetail(false); setSelected(null); setStrategy(null);
+    setShowDetail(false); setSelected(null); setStrategy(null); setShowInaction(false);
   };
 
   const generate = async (acc) => {
-    setLoading(true); setStrategy(null); setError(null); setRevealed(false);
+    setLoading(true); setStrategy(null); setError(null); setRevealed(false); setShowInaction(false);
     try {
       const res = await fetch("/api/strategy", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(acc) });
       const data = await res.json();
@@ -126,6 +151,8 @@ export default function Home() {
     } catch (e) { setError(e.message || "Could not generate strategy."); }
     finally { setLoading(false); }
   };
+
+  const inaction = selected ? calcInaction(selected) : null;
 
   return (
     <>
@@ -140,16 +167,21 @@ export default function Home() {
           @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
           @keyframes spin{to{transform:rotate(360deg);}}
           @keyframes glow{0%,100%{opacity:0.6;}50%{opacity:1;}}
+          @keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
           .acc-row{transition:all 0.15s;cursor:pointer;}
           .acc-row:hover{background:#16161e!important;}
           .gen-btn{transition:all 0.2s;}
           .gen-btn:hover{background:#e8b84b!important;color:#0a0a12!important;box-shadow:0 0 24px rgba(232,184,75,0.3)!important;}
+          .inaction-btn{transition:all 0.2s;}
+          .inaction-btn:hover{border-color:#f87171!important;color:#f87171!important;}
           .reveal-1{animation:fadeUp 0.5s 0.05s ease both;}
           .reveal-2{animation:fadeUp 0.5s 0.15s ease both;}
           .reveal-3{animation:fadeUp 0.5s 0.25s ease both;}
           .reveal-4{animation:fadeUp 0.5s 0.35s ease both;}
           .reveal-5{animation:fadeUp 0.5s 0.45s ease both;}
           .reveal-6{animation:fadeUp 0.5s 0.55s ease both;}
+          .reveal-7{animation:fadeUp 0.5s 0.65s ease both;}
+          .inaction-panel{animation:slideDown 0.3s ease both;}
           .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.75rem;}
           .main-grid{display:grid;grid-template-columns:245px 1fr;gap:12px;align-items:start;}
           .gauge-row{display:grid;grid-template-columns:150px 1fr;gap:10px;}
@@ -248,6 +280,7 @@ export default function Home() {
 
             {selected && (
               <>
+                {/* Account card */}
                 <div style={card()}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                     <div style={{ flex: 1, marginRight: 12 }}>
@@ -294,6 +327,13 @@ export default function Home() {
 
                 {strategy && (
                   <>
+                    {/* Timestamp */}
+                    <div className="reveal-1" style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <span style={{ fontSize: 10, color: C.label, fontFamily: "'IBM Plex Mono',monospace" }}>
+                        Analysis refreshed {elapsed}s ago
+                      </span>
+                    </div>
+
                     {/* Gauge + KPIs */}
                     <div className="reveal-1 gauge-row">
                       <div style={{ ...card(), display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 12px" }}>
@@ -361,15 +401,20 @@ export default function Home() {
                         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                           {(strategy.timeline || []).map((t, i) => {
                             const ch = CHANNEL_COLORS[t.channel] || { color: C.label, bg: "rgba(144,144,176,0.1)" };
+                            const conf = t.confidence || 75;
+                            const confColor = conf >= 75 ? "#4ade80" : conf >= 55 ? "#fb923c" : "#f87171";
                             return (
                               <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                                 <div style={{ width: 30, height: 30, borderRadius: "50%", background: C.deep, border: "2px solid #e8b84b40", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1 }}>
                                   <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 10, fontWeight: 700, color: C.gold }}>{t.week}</span>
                                 </div>
                                 <div style={{ flex: 1, background: C.deep, border: `1px solid ${C.border}`, borderRadius: 8, padding: "9px 12px" }}>
-                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4, gap: 8 }}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5, gap: 8 }}>
                                     <span style={{ fontSize: 13, fontWeight: 600, color: C.heading }}>{t.action}</span>
-                                    <span style={{ fontSize: 10, padding: "2px 8px", background: ch.bg, color: ch.color, borderRadius: 20, fontWeight: 600, flexShrink: 0 }}>{t.channel}</span>
+                                    <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
+                                      <span style={{ fontSize: 9, padding: "2px 7px", background: `${confColor}12`, color: confColor, borderRadius: 20, fontWeight: 600, fontFamily: "'IBM Plex Mono',monospace" }}>{conf}% conf.</span>
+                                      <span style={{ fontSize: 10, padding: "2px 8px", background: ch.bg, color: ch.color, borderRadius: 20, fontWeight: 600 }}>{t.channel}</span>
+                                    </div>
                                   </div>
                                   <p style={{ fontSize: 11, color: C.body, lineHeight: 1.5, margin: 0 }}>{t.goal}</p>
                                 </div>
@@ -394,8 +439,41 @@ export default function Home() {
                       </div>
                     </div>
 
+                    {/* Simulate Inaction */}
                     <div className="reveal-6">
-                      <button onClick={() => { setStrategy(null); setRevealed(false); }}
+                      <button className="inaction-btn" onClick={() => setShowInaction(v => !v)}
+                        style={{ width: "100%", padding: "11px 18px", fontSize: 12, fontFamily: "'IBM Plex Sans',sans-serif", fontWeight: 600, cursor: "pointer", border: "1px solid #3a3a52", borderRadius: 10, background: "transparent", color: C.label, letterSpacing: "0.2px" }}>
+                        {showInaction ? "Hide" : "⚠ What if we do nothing?"}
+                      </button>
+                    </div>
+
+                    {showInaction && inaction && (
+                      <div className="inaction-panel" style={{ ...card(), borderColor: "rgba(248,113,113,0.25)", background: "rgba(248,113,113,0.03)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                          <span style={{ fontSize: 13 }}>⚠️</span>
+                          <p style={{ fontSize: 11, fontWeight: 600, color: "#f87171", textTransform: "uppercase", letterSpacing: "0.6px" }}>Projected cost of inaction · 90 days</p>
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 12 }}>
+                          {[
+                            { label: "Revenue at risk", value: `$${(inaction.projectedLoss / 1000).toFixed(0)}K`, color: "#f87171" },
+                            { label: "Bookings lost", value: `${inaction.bookingsAtRisk} events`, color: "#fb923c" },
+                            { label: "Guests at risk", value: `${inaction.guestsAtRisk} people`, color: "#fb923c" },
+                          ].map(m => (
+                            <div key={m.label} style={{ background: C.deep, border: "1px solid rgba(248,113,113,0.15)", borderRadius: 8, padding: "10px 12px" }}>
+                              <p style={{ fontSize: 10, color: C.label, marginBottom: 4 }}>{m.label}</p>
+                              <p style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 16, fontWeight: 700, color: m.color }}>{m.value}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ padding: "9px 12px", background: `${inaction.riskColor}10`, border: `1px solid ${inaction.riskColor}30`, borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: 11, color: C.body }}>Competitive displacement risk</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: inaction.riskColor, fontFamily: "'IBM Plex Mono',monospace" }}>{inaction.risk}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="reveal-7">
+                      <button onClick={() => { setStrategy(null); setRevealed(false); setShowInaction(false); }}
                         style={{ fontSize: 12, padding: "9px 18px", borderRadius: 7, border: "1px solid #3a3a52", background: "transparent", color: C.body, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s", width: "100%" }}
                         onMouseEnter={e => e.target.style.borderColor = C.gold}
                         onMouseLeave={e => e.target.style.borderColor = "#3a3a52"}>
