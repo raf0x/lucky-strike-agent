@@ -324,7 +324,7 @@ export default function Home() {
                         {(strategy.ai_insights || []).map((ins, i) => (
                           <div key={i} style={{ background: C.deep, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: 8, padding: "10px 12px", display: "flex", gap: 10, alignItems: "flex-start" }}>
                             <span style={{ color: C.gold, fontSize: 12, marginTop: 1, flexShrink: 0 }}>✦</span>
-                            <p style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{ins.insight}</p>
+                            <p style={{ fontSize: 12, color: C.body, lineHeight: 1.6, margin: 0, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{ins.insight}</p>
                           </div>
                         ))}
                       </div>
@@ -338,7 +338,7 @@ export default function Home() {
                           const ic = s.impact === "positive" ? "#4ade80" : s.impact === "negative" ? "#f87171" : C.label;
                           const ib = s.impact === "positive" ? "rgba(74,222,128,0.08)" : s.impact === "negative" ? "rgba(248,113,113,0.08)" : "rgba(144,144,176,0.06)";
                           return (
-                            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 10px", background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7, gap: 8 }}>
+                            <div key={i} style={{ display: "flex", alignItems: "flex-start", flexWrap: "wrap", padding: "7px 10px", background: C.deep, border: `1px solid ${C.border}`, borderRadius: 7, gap: 6 }}>
                               <span style={{ fontSize: 12, color: C.body, flex: 1 }}>{s.label}</span>
                               <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
                                 <span style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 12, color: C.heading, fontWeight: 500 }}>{s.value}</span>
