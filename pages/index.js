@@ -2,11 +2,126 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
 const accounts = [
-  { id: 1, company: "Salesforce", contact: "Jordan Ellis", title: "VP of Employee Experience", location: "Seattle, WA", last_booking: "14 days ago", days_since: 14, annual_value: 48000, events_per_year: 8, preferred_package: "Corporate Premier", team_size: 180, notes: "Bowling leagues, private lanes, strong Q1 spender", status: "healthy" },
-  { id: 2, company: "Deloitte LLP", contact: "Sarah Kim", title: "Director of Talent", location: "Portland, OR", last_booking: "67 days ago", days_since: 67, annual_value: 72000, events_per_year: 12, preferred_package: "Executive Retreat", team_size: 340, notes: "Q4 end-of-year events historically large, 2 planners on team", status: "at_risk" },
-  { id: 3, company: "Microsoft", contact: "Marcus Chen", title: "Head of Culture & Events", location: "Redmond, WA", last_booking: "112 days ago", days_since: 112, annual_value: 95000, events_per_year: 15, preferred_package: "Full Venue Buyout", team_size: 600, notes: "Xbox and Surface teams, all-hands events, prefers Friday evenings", status: "critical" },
-  { id: 4, company: "Amazon", contact: "Priya Patel", title: "Senior Events Manager", location: "Seattle, WA", last_booking: "31 days ago", days_since: 31, annual_value: 62000, events_per_year: 10, preferred_package: "Corporate Premier", team_size: 250, notes: "AWS team, weekday evenings, responsive to exclusive offers", status: "healthy" },
-  { id: 5, company: "JPMorgan Chase", contact: "David Wu", title: "Facilities & Events Lead", location: "Chicago, IL", last_booking: "88 days ago", days_since: 88, annual_value: 55000, events_per_year: 6, preferred_package: "Executive Retreat", team_size: 200, notes: "Compliance-sensitive, NDAs required, large summer outing budget", status: "at_risk" },
+  {
+    id: 1,
+    company: "Nike",
+    contact: "Danielle Reyes",
+    title: "Head of Employee Events",
+    location: "Beaverton, OR",
+    last_booking: "22 days ago",
+    days_since: 22,
+    annual_value: 58000,
+    events_per_year: 10,
+    preferred_package: "Corporate Premier",
+    team_size: 220,
+    notes: "Seasonal product launches and team celebrations. Heavy F&B spend post-event, arcade packages consistently upsold. Spring and fall booking cycles align with Nike fiscal calendar.",
+    status: "healthy",
+  },
+  {
+    id: 2,
+    company: "Salesforce",
+    contact: "Jordan Ellis",
+    title: "VP of Employee Experience",
+    location: "Seattle, WA",
+    last_booking: "18 days ago",
+    days_since: 18,
+    annual_value: 52000,
+    events_per_year: 9,
+    preferred_package: "Corporate Premier",
+    team_size: 185,
+    notes: "Trailhead and Ohana culture drives high event frequency. Q1 strongest booking quarter. Bowling leagues for sales teams a recurring ask. Responsive to bundled lane + dining packages.",
+    status: "healthy",
+  },
+  {
+    id: 3,
+    company: "Amazon",
+    contact: "Priya Patel",
+    title: "Senior Events Manager",
+    location: "Seattle, WA",
+    last_booking: "31 days ago",
+    days_since: 31,
+    annual_value: 67000,
+    events_per_year: 11,
+    preferred_package: "Corporate Premier",
+    team_size: 265,
+    notes: "AWS org books weekday evenings exclusively. Premium F&B packages standard. Alexa division flagged for expansion outreach in Q3. Responds best to data-backed ROI framing in proposals.",
+    status: "healthy",
+  },
+  {
+    id: 4,
+    company: "T-Mobile",
+    contact: "Carlos Mendez",
+    title: "Corporate Events Director",
+    location: "Bellevue, WA",
+    last_booking: "61 days ago",
+    days_since: 61,
+    annual_value: 44000,
+    events_per_year: 8,
+    preferred_package: "Executive Retreat",
+    team_size: 155,
+    notes: "Sales team kickoffs and HR appreciation events. Exclusive lane packages historically close deals. Mid-year budget review currently in progress — window closing in 3 weeks.",
+    status: "at_risk",
+  },
+  {
+    id: 5,
+    company: "Deloitte LLP",
+    contact: "Sarah Kim",
+    title: "Director of Talent & Culture",
+    location: "Chicago, IL",
+    last_booking: "74 days ago",
+    days_since: 74,
+    annual_value: 78000,
+    events_per_year: 13,
+    preferred_package: "Executive Retreat",
+    team_size: 355,
+    notes: "Q4 year-end events consistently their largest single spend. Two internal event planners on team — outreach should CC both. Compliance review process can add 10-day approval lag.",
+    status: "at_risk",
+  },
+  {
+    id: 6,
+    company: "JPMorgan Chase",
+    contact: "David Wu",
+    title: "Global Events Lead",
+    location: "Chicago, IL",
+    last_booking: "91 days ago",
+    days_since: 91,
+    annual_value: 61000,
+    events_per_year: 7,
+    preferred_package: "Executive Retreat",
+    team_size: 205,
+    notes: "NDA required for all bookings — include in first response. Summer outing budget is significant and unallocated. Legal review adds 2-week lead time. Warm intro from venue GM recommended.",
+    status: "at_risk",
+  },
+  {
+    id: 7,
+    company: "Microsoft",
+    contact: "Marcus Chen",
+    title: "Head of Culture & Events",
+    location: "Redmond, WA",
+    last_booking: "118 days ago",
+    days_since: 118,
+    annual_value: 96000,
+    events_per_year: 14,
+    preferred_package: "Full Venue Buyout",
+    team_size: 590,
+    notes: "Xbox Game Studios and Surface divisions. Full-venue buyouts standard. Prefers Friday evenings. Q3 budget cycle opens in 6 weeks. Previous event NPS: 94. Risk: competing internal venue being evaluated.",
+    status: "critical",
+  },
+  {
+    id: 8,
+    company: "Hyatt Hotels Corp",
+    contact: "Angela Torres",
+    title: "HR Programs Manager",
+    location: "Chicago, IL",
+    last_booking: "149 days ago",
+    days_since: 149,
+    annual_value: 38000,
+    events_per_year: 6,
+    preferred_package: "Corporate Premier",
+    team_size: 125,
+    notes: "Internal L&D offsites and manager retreats. Historically books Q1 and Q3. Went dark following VP of HR departure 5 months ago. New contact unaware of prior relationship — reintroduction required.",
+    status: "critical",
+  },
 ];
 
 const STATUS = {
@@ -205,7 +320,6 @@ export default function Home() {
 
       <main style={{ fontFamily: "'IBM Plex Sans',sans-serif", maxWidth: 1040, margin: "0 auto", padding: "1.25rem 1rem", minHeight: "100vh" }}>
 
-        {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", paddingBottom: "1rem", borderBottom: `1px solid ${C.border}` }}>
           <div>
             <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: "clamp(16px,4vw,21px)", fontWeight: 800, color: C.heading, letterSpacing: "-0.3px", margin: 0 }}>
@@ -219,13 +333,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Metrics */}
         <div className="metrics-grid">
           {[
-            { label: "Total Accounts", value: "5", color: C.heading },
-            { label: "Healthy", value: "2", color: "#4ade80" },
-            { label: "At Risk", value: "2", color: "#fb923c" },
-            { label: "Critical", value: "1", color: "#f87171" },
+            { label: "Total Accounts", value: "8", color: C.heading },
+            { label: "Healthy", value: "3", color: "#4ade80" },
+            { label: "At Risk", value: "3", color: "#fb923c" },
+            { label: "Critical", value: "2", color: "#f87171" },
           ].map(m => (
             <div key={m.label} style={{ ...card(), padding: "10px 12px" }}>
               <p style={{ fontSize: 10, color: C.body, textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: 4 }}>{m.label}</p>
@@ -234,10 +347,8 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Main layout */}
         <div className="main-grid">
 
-          {/* Account list */}
           <div className={`desktop-list${showDetail ? " hidden-mobile" : ""}`}>
             <p style={{ fontSize: 10, color: C.body, textTransform: "uppercase", letterSpacing: "0.9px", marginBottom: 8, fontFamily: "'IBM Plex Mono',monospace" }}>Accounts</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
@@ -263,7 +374,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Detail panel */}
           <div className={`detail-panel${!showDetail ? " hidden-mobile" : ""}`} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
             <div className="mobile-back" onClick={handleBack}>
@@ -280,7 +390,6 @@ export default function Home() {
 
             {selected && (
               <>
-                {/* Account card */}
                 <div style={card()}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                     <div style={{ flex: 1, marginRight: 12 }}>
@@ -327,14 +436,12 @@ export default function Home() {
 
                 {strategy && (
                   <>
-                    {/* Timestamp */}
                     <div className="reveal-1" style={{ display: "flex", justifyContent: "flex-end" }}>
                       <span style={{ fontSize: 10, color: C.label, fontFamily: "'IBM Plex Mono',monospace" }}>
                         Analysis refreshed {elapsed}s ago
                       </span>
                     </div>
 
-                    {/* Gauge + KPIs */}
                     <div className="reveal-1 gauge-row">
                       <div style={{ ...card(), display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 12px" }}>
                         <Gauge value={strategy.rebooking_probability} />
@@ -350,7 +457,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* AI Insights */}
                     <div className="reveal-2" style={card()}>
                       <SectionLabel>AI Insights</SectionLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -363,7 +469,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* AI Signals */}
                     <div className="reveal-3" style={card()}>
                       <SectionLabel>AI Signals</SectionLabel>
                       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
@@ -393,7 +498,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Timeline */}
                     <div className="reveal-4" style={card()}>
                       <SectionLabel>30-Day Campaign Timeline</SectionLabel>
                       <div style={{ position: "relative" }}>
@@ -425,7 +529,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Email */}
                     <div className="reveal-5" style={card()}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                         <SectionLabel style={{ marginBottom: 0 }}>Draft outreach email</SectionLabel>
@@ -439,7 +542,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Simulate Inaction */}
                     <div className="reveal-6">
                       <button className="inaction-btn" onClick={() => setShowInaction(v => !v)}
                         style={{ width: "100%", padding: "11px 18px", fontSize: 12, fontFamily: "'IBM Plex Sans',sans-serif", fontWeight: 600, cursor: "pointer", border: "1px solid #3a3a52", borderRadius: 10, background: "transparent", color: C.label, letterSpacing: "0.2px" }}>
